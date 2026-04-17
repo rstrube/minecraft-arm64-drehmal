@@ -12,8 +12,9 @@
 1. Clone this repo to desired location on SBC (e.g. `/opt/minecraft`), change ownership, create data directory
 
 ```
-sudo git clone https://github.com/rstrube/minecraft-arm64-drehmal /opt/.
-chown -R $USER:$USER /opt/minecraft-arm64-drehmal
+cd /opt
+sudo git clone https://github.com/rstrube/minecraft-arm64-drehmal
+sudo chown -R $USER:$USER /opt/minecraft-arm64-drehmal
 mkdir -p /opt/minecraft-arm64-drehmal/data
 
 ```

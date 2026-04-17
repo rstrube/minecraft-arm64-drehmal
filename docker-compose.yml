@@ -12,10 +12,11 @@ services:
       # Required
       EULA: "TRUE"
 
-      # Run as your user
+      # Run as your user (optional)
       # use "id -u" and "id -g" to determine UID and GUID
-      UID: "1000"
-      GID: "1000"
+      # if NOT set, all changes to /data and log files will be owned by root
+      #UID: "1000"
+      #GID: "1000"
 
       # Fabric + Minecraft version to match Drehmal
       TYPE: FABRIC
