@@ -1,7 +1,7 @@
 services:
   minecraft:
     image: itzg/minecraft-server:java21
-    container_name: minecraft-arm64-drehmal
+    container_name: minecraft-drehmal
     platform: linux/arm64
     tty: true
     stdin_open: true
@@ -12,9 +12,10 @@ services:
       # Required
       EULA: "TRUE"
 
-      # Run as your user (robert)
-      UID: "1001"
-      GID: "1001"
+      # Run as your user
+      # use "id -u" and "id -g" to determine UID and GUID
+      UID: "1000"
+      GID: "1000"
 
       # Fabric + Minecraft version to match Drehmal
       TYPE: FABRIC
@@ -24,7 +25,50 @@ services:
       # Use pre-existing world
       LEVEL: world
 
-      # Performance tuning for N2+ (4GB RAM)
+      # -------------------------------------------------------
+      # HARDWARE TIERS - uncomment the section that matches
+      # your hardware, comment out all others
+      # -------------------------------------------------------
+
+      # --- Tier 1: Low-end SBC (2GB RAM, e.g. Pi 4 2GB) -----
+      # MEMORY: "1G"
+      # JVM_OPTS: >-
+      #   -XX:+UseG1GC
+      #   -XX:+ParallelRefProcEnabled
+      #   -XX:MaxGCPauseMillis=200
+      #   -XX:+UnlockExperimentalVMOptions
+      #   -XX:+DisableExplicitGC
+      #   -XX:G1HeapWastePercent=5
+      #   -XX:G1MixedGCCountTarget=4
+      #   -XX:G1MixedGCLiveThresholdPercent=90
+      #   -XX:G1RSetUpdatingPauseTimePercent=5
+      #   -XX:SurvivorRatio=32
+      #   -XX:+PerfDisableSharedMem
+      #   -XX:MaxTenuringThreshold=1
+      #   -XX:+UseStringDeduplication
+      # VIEW_DISTANCE: "6"
+      # SIMULATION_DISTANCE: "4"
+
+      # --- Tier 2: Mid-range SBC (3-4GB RAM, e.g. Pi 4 4GB) -
+      # MEMORY: "2G"
+      # JVM_OPTS: >-
+      #   -XX:+UseG1GC
+      #   -XX:+ParallelRefProcEnabled
+      #   -XX:MaxGCPauseMillis=200
+      #   -XX:+UnlockExperimentalVMOptions
+      #   -XX:+DisableExplicitGC
+      #   -XX:G1HeapWastePercent=5
+      #   -XX:G1MixedGCCountTarget=4
+      #   -XX:G1MixedGCLiveThresholdPercent=90
+      #   -XX:G1RSetUpdatingPauseTimePercent=5
+      #   -XX:SurvivorRatio=32
+      #   -XX:+PerfDisableSharedMem
+      #   -XX:MaxTenuringThreshold=1
+      # VIEW_DISTANCE: "7"
+      # SIMULATION_DISTANCE: "5"
+
+      # --- Tier 3: High-end SBC (4GB RAM, e.g. Odroid N2+) --
+      # This is the active configuration for the Odroid N2+
       MEMORY: "3G"
       JVM_OPTS: >-
         -XX:+UseG1GC
@@ -39,21 +83,40 @@ services:
         -XX:SurvivorRatio=32
         -XX:+PerfDisableSharedMem
         -XX:MaxTenuringThreshold=1
+        -XX:G1NewSizePercent=20
+        -XX:G1MaxNewSizePercent=40
+      VIEW_DISTANCE: "8"
+      SIMULATION_DISTANCE: "6"
+
+      # --- Tier 4: High-end SBC (6-8GB RAM, e.g. Pi 5 8GB) --
+      # MEMORY: "5G"
+      # JVM_OPTS: >-
+      #   -XX:+UseG1GC
+      #   -XX:+ParallelRefProcEnabled
+      #   -XX:MaxGCPauseMillis=200
+      #   -XX:+UnlockExperimentalVMOptions
+      #   -XX:+DisableExplicitGC
+      #   -XX:G1HeapWastePercent=5
+      #   -XX:G1MixedGCCountTarget=4
+      #   -XX:G1MixedGCLiveThresholdPercent=90
+      #   -XX:G1RSetUpdatingPauseTimePercent=5
+      #   -XX:SurvivorRatio=32
+      #   -XX:+PerfDisableSharedMem
+      #   -XX:MaxTenuringThreshold=1
+      #   -XX:G1NewSizePercent=20
+      #   -XX:G1MaxNewSizePercent=40
+      #   -XX:G1HeapRegionSize=8m
+      # VIEW_DISTANCE: "10"
+      # SIMULATION_DISTANCE: "8"
+
+      # -------------------------------------------------------
 
       # Server settings
       MAX_PLAYERS: "8"
       DIFFICULTY: normal
       SPAWN_PROTECTION: "0"
-      VIEW_DISTANCE: "8"
-      SIMULATION_DISTANCE: "6"
       ONLINE_MODE: "TRUE"
 
     volumes:
       - /opt/minecraft/drehmal/data:/data
       - /opt/minecraft/drehmal/mods:/mods:ro
-
-    # Optionally limit CPU resources
-    #deploy:
-    #  resources:
-    #    limits:
-    #      cpus: '3.5'
