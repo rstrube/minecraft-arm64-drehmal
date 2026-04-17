@@ -15,7 +15,7 @@
 cd /opt
 sudo git clone https://github.com/rstrube/minecraft-arm64-drehmal
 sudo chown -R $USER:$USER /opt/minecraft-arm64-drehmal
-mkdir -p /opt/minecraft-arm64-drehmal/data
+mkdir -p /opt/minecraft-arm64-drehmal/data/world
 
 ```
 2. Download latest [Dremhel APOTHEOSIS](https://www.drehmal.net/) world.zip file.
@@ -30,7 +30,7 @@ scp Drehmal\ APOTHEOSIS\ 2.2.2f.zip user@sbc:/opt/minecraft-arm64-drehmal/.
 
 ```
 cd /opt/minecraft-arm64-drehmal
-unzip Drehmal_APOTHEOSIS_v2.2.2f.zip -d data/
+unzip Drehmal\ APOTHEOSIS\ 2.2.2f.zip -d data/world
 
 # The extracted folder should become the world — rename if needed:
 mv data/Drehmal* data/world
