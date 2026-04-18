@@ -43,6 +43,20 @@ The `docker-compose.yml` file has already been setup for some sane defaults for 
 docker compose up -d
 ```
 
+You can attach:
+
+```
+docker attach minecraft-drehmal
+```
+
+To disconnect use `CTRL+Q,P`
+
+You can view logs:
+
+```
+docker logs -f minecraft-drehmal
+```
+
 # Server Side Mod Information
 Drehmal recommends both server and client side modes.  Below is a list of mods that are package with this repository and match what Drehmal v2.2.2f recommends.
 
