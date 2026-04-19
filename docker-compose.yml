@@ -13,7 +13,7 @@ services:
       EULA: "TRUE"
 
       # Run as your user (optional)
-      # use "id -u" and "id -g" to determine UID and GUID
+      # use "id -u" and "id -g" to determine UID and GID
       # if NOT set, all changes to /data and log files will be owned by root
       #UID: "1000"
       #GID: "1000"
@@ -25,6 +25,19 @@ services:
 
       # Use pre-existing world
       LEVEL: world
+
+      # -------------------------------------------------------
+      # SERVER PASSWORD (optional)
+      # If set, players must enter this password to join.
+      # Requires the Whitelist or a password plugin to enforce.
+      # Uncomment and set to enable.
+      # -------------------------------------------------------
+      #WHITELIST: "player1,player2"
+      #ENFORCE_WHITELIST: "true"
+      # Or use a server resource pack password:
+      #SERVER_PORT: "25565"
+      #RESOURCE_PACK_SHA1: ""
+      #RCON_PASSWORD: "changeme"
 
       # -------------------------------------------------------
       # HARDWARE TIERS - uncomment the section that matches
