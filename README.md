@@ -15,8 +15,8 @@ A Dockerized Minecraft Java Edition server running the **Drehmal: APOTHEOSIS** a
 
 ## Assumptions
 
-- You have an ARM64 SBC running a Debian-based Linux distro (e.g. Ubuntu)
-- You can SSH into the SBC and issue `sudo` commands
+- You have a Raspberry Pi (or other ARM64 SBC) running a Debian-based Linux distro (e.g. Raspberry Pi OS, Ubuntu)
+- You can SSH into the Pi and issue `sudo` commands
 - Docker is installed and your user is part of the `docker` group
 
 ---
@@ -55,7 +55,7 @@ unzip "Drehmal APOTHEOSIS 2.2.2f.zip" -d data/world
 
 ### 4. Configure the Docker Compose file
 
-The `docker-compose.yml` has multiple hardware tiers defined within it — Tier 3 is uncommented by default (Odroid N2+ / 4GB RAM). Uncomment the tier that matches your hardware for best performance. See the [Hardware Tiers](#hardware-tiers) section below for details.
+The `docker-compose.yml` has multiple hardware tiers defined within it — Tier 3 is uncommented by default (Raspberry Pi 5 4GB). Uncomment the tier that matches your hardware for best performance. See the [Hardware Tiers](#hardware-tiers) section below for details.
 
 Optionally, set the `UID` and `GID` environment variables to the user that will run the Docker container. If not set, logs and changes to the `data/` directory will be owned by `root`. To find your values:
 
@@ -130,12 +130,14 @@ The `docker-compose.yml` includes four hardware tiers. Only one should be active
 
 | Tier | RAM | MEMORY | VIEW_DISTANCE | SIMULATION_DISTANCE | Example Hardware |
 |---|---|---|---|---|---|
-| 1 | 2GB | 1G | 6 | 4 | Pi 4 2GB |
-| 2 | 3-4GB | 2G | 7 | 5 | Pi 4 4GB |
-| 3 | 4GB | 3G | 8 | 6 | Odroid N2+ ← default |
-| 4 | 6-8GB | 5G | 10 | 8 | Pi 5 8GB |
+| 1 | 2GB | 1G | 6 | 4 | Raspberry Pi 4 (2GB) |
+| 2 | 4GB | 2G | 7 | 5 | Raspberry Pi 4 (4GB) |
+| 3 | 4GB | 3G | 8 | 6 | Raspberry Pi 5 (4GB) ← default |
+| 4 | 8GB | 6G | 10 | 8 | Raspberry Pi 5 (8GB) |
 
-`MEMORY` is set below total RAM to leave ~1GB headroom for the OS. `SIMULATION_DISTANCE` should always be ≤ `VIEW_DISTANCE`. For an adventure map like Drehmal, lower simulation distance has minimal gameplay impact since players are exploring rather than running farms.
+`MEMORY` is set below total RAM to leave headroom for the OS. `SIMULATION_DISTANCE` should always be ≤ `VIEW_DISTANCE`. For an adventure map like Drehmal, lower simulation distance has minimal gameplay impact since players are exploring rather than running farms.
+
+> **Other ARM64 SBCs:** The Raspberry Pi tiers are a good reference point for any ARM64 SBC. Match the tier to your board's RAM and CPU generation — for example, an Odroid N2+ (4GB, 6-core Cortex-A73/A53) fits comfortably at Tier 3.
 
 ---
 

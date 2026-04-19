@@ -14,15 +14,11 @@ The project is hosted on GitHub so that configuration changes (primarily `docker
 
 ## Hardware Context
 
-The primary target hardware is the **Hardkernel Odroid N2+**:
+The primary target hardware is the **Raspberry Pi** (Pi 4 and Pi 5 family), running a Debian-based Linux distro (Raspberry Pi OS or Ubuntu) with Docker installed. Any ARM64 SBC meeting those requirements should work.
 
-- ARM64v8 architecture
-- 6-core CPU (4x Cortex-A73 @ 2.2GHz + 2x Cortex-A53 @ 1.8GHz)
-- 4GB RAM
-- eMMC storage (Ubuntu 24.04)
-- Docker installed and running
+The `docker-compose.yml` includes four hardware tiers targeting common Raspberry Pi configurations. Only one tier should be active at a time.
 
-The `docker-compose.yml` includes tiered hardware configurations (commented out) to support other SBCs with different RAM amounts. Only one tier should be active at a time.
+The project author runs an **Odroid N2+** (4GB RAM, 6-core Cortex-A73/A53), which fits at Tier 3 — the same RAM allocation and settings as the Raspberry Pi 5 (4GB). The N2+'s additional cores provide a meaningful benefit via C2ME's parallel chunk loading.
 
 ---
 
@@ -97,7 +93,7 @@ All mods are for **Minecraft 1.20.1 / Fabric** and are stored in the `mods/` dir
 
 ### Notes on specific mods
 
-**C2ME** is particularly beneficial on the Odroid N2+ because it parallelizes chunk loading across all 6 cores. Drehmal's 12k x 12k world means chunk loading is a significant workload. C2ME is an alpha build for 1.20.1 — if startup issues occur, it is the first mod to try removing.
+**C2ME** is particularly beneficial on multi-core SBCs because it parallelizes chunk loading across all available CPU cores. Drehmal's 12k x 12k world means chunk loading is a significant workload. C2ME is an alpha build for 1.20.1 — if startup issues occur, it is the first mod to try removing.
 
 **Starlight** has been archived by its author (March 2024) as Mojang improved their own lighting engine in newer Minecraft versions. For 1.20.1 it remains the correct choice. The recommended successor, **ScalableLux**, only supports 1.21+.
 
@@ -149,10 +145,12 @@ The `docker-compose.yml` includes four hardware tiers. Only one should be active
 
 | Tier | RAM | MEMORY | VIEW_DISTANCE | SIMULATION_DISTANCE | Example Hardware |
 |---|---|---|---|---|---|
-| 1 | 2GB | 1G | 6 | 4 | Pi 4 2GB |
-| 2 | 3-4GB | 2G | 7 | 5 | Pi 4 4GB |
-| 3 | 4GB | 3G | 8 | 6 | Odroid N2+ ← active |
-| 4 | 6-8GB | 5G | 10 | 8 | Pi 5 8GB |
+| 1 | 2GB | 1G | 6 | 4 | Raspberry Pi 4 (2GB) |
+| 2 | 4GB | 2G | 7 | 5 | Raspberry Pi 4 (4GB) |
+| 3 | 4GB | 3G | 8 | 6 | Raspberry Pi 5 (4GB) ← default |
+| 4 | 8GB | 6G | 10 | 8 | Raspberry Pi 5 (8GB) |
+
+The Odroid N2+ (4GB) fits Tier 3.
 
 `MEMORY` is set below total RAM to leave ~1GB headroom for the OS. `SIMULATION_DISTANCE` should always be ≤ `VIEW_DISTANCE`. For an adventure map like Drehmal, lower simulation distance has minimal gameplay impact since players are exploring rather than running farms.
 
