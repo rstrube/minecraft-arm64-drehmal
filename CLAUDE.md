@@ -27,7 +27,7 @@ The project author runs an **Odroid N2+** (4GB RAM, 6-core Cortex-A73/A53), whic
 - **Map:** Drehmal: APOTHEOSIS v2.2.2f
 - **Minecraft version:** Java Edition 1.20.1
 - **Modloader:** Fabric
-- **Fabric Loader version:** 0.16.14
+- **Fabric Loader version:** 0.15.11
 - **Map size:** 12,000 x 12,000 blocks
 - **Max recommended players:** 8
 - **Map download:** https://www.drehmal.net/downloads (World File — Google Drive)
@@ -58,10 +58,10 @@ The repo is cloned into `/opt` on the SBC, giving a root directory of `/opt/mine
 /opt/minecraft-arm64-drehmal/
 ├── docker-compose.yml
 ├── mods/
-│   ├── fabric-api-0.92.6+1.20.1.jar
-│   ├── lithium-fabric-mc1.20.1-0.11.4.jar
-│   ├── c2me-fabric-mc1.20.1-0.2.0+alpha.11.16.jar
-│   ├── modernfix-fabric-5.24.3+mc1.20.1.jar
+│   ├── fabric-api-0.92.2+1.20.1.jar
+│   ├── lithium-fabric-mc1.20.1-0.11.2.jar
+│   ├── c2me-fabric-mc1.20.1-0.2.0+alpha.11.5.jar
+│   ├── modernfix-fabric-5.18.1+mc1.20.1.jar
 │   ├── ferritecore-6.0.1-fabric.jar
 │   ├── memoryleakfix-fabric-1.17+-1.1.5.jar
 │   ├── starlight-1.1.2+fabric.dbc156f.jar
@@ -82,11 +82,11 @@ All mods are for **Minecraft 1.20.1 / Fabric** and are stored in the `mods/` dir
 
 | Mod | Version | Purpose |
 |---|---|---|
-| Fabric API | 0.92.6+1.20.1 | Required by all Fabric mods |
-| Lithium | 0.11.4 | General server-side game logic optimization |
-| C2ME | 0.2.0+alpha.11.16 | Concurrent chunk loading across multiple CPU cores |
+| Fabric API | 0.92.2+1.20.1 | Required by all Fabric mods |
+| Lithium | 0.11.2 | General server-side game logic optimization |
+| C2ME | 0.2.0+alpha.11.5 | Concurrent chunk loading across multiple CPU cores |
 | FerriteCore | 6.0.1 | Memory usage optimization |
-| ModernFix | 5.24.3 | Performance, memory, and bug fixes |
+| ModernFix | 5.18.1 | Performance, memory, and bug fixes |
 | Memory Leak Fix | 1.1.5 | Fixes various memory leaks |
 | Starlight | 1.1.2 | Rewrites lighting engine for better performance |
 | Lazy DFU | 0.1.3 | Delays DataFixerUpper initialization, reduces startup time |
