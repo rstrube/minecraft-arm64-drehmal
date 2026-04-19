@@ -8,7 +8,7 @@ A Dockerized Minecraft Java Edition server running the **Drehmal: APOTHEOSIS** a
 
 - **Map:** [Drehmal: APOTHEOSIS v2.2.2f](https://www.drehmal.net/) — a massive 12,000 x 12,000 block open-world adventure map with heavy emphasis on exploration, survival, and narrative. 100% multiplayer compatible for up to 8 players.
 - **Minecraft version:** Java Edition 1.20.1
-- **Modloader:** Fabric (loader 0.15.11)
+- **Modloader:** Fabric (loader 0.16.14)
 - **Docker image:** `itzg/minecraft-server:java21`
 
 ---

@@ -27,7 +27,7 @@ The project author runs an **Odroid N2+** (4GB RAM, 6-core Cortex-A73/A53), whic
 - **Map:** Drehmal: APOTHEOSIS v2.2.2f
 - **Minecraft version:** Java Edition 1.20.1
 - **Modloader:** Fabric
-- **Fabric Loader version:** 0.15.11
+- **Fabric Loader version:** 0.16.14
 - **Map size:** 12,000 x 12,000 blocks
 - **Max recommended players:** 8
 - **Map download:** https://www.drehmal.net/downloads (World File — Google Drive)

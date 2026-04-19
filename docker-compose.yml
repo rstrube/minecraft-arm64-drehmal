@@ -21,7 +21,7 @@ services:
       # Fabric + Minecraft version to match Drehmal
       TYPE: FABRIC
       VERSION: "1.20.1"
-      FABRIC_LOADER_VERSION: "0.15.11"
+      FABRIC_LOADER_VERSION: "0.16.14"
 
       # Use pre-existing world
       LEVEL: world
