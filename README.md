@@ -8,7 +8,7 @@ A Dockerized Minecraft Java Edition server running the **Drehmal: APOTHEOSIS** a
 
 - **Map:** [Drehmal: APOTHEOSIS v2.2.2f](https://www.drehmal.net/) — a massive 12,000 x 12,000 block open-world adventure map with heavy emphasis on exploration, survival, and narrative. 100% multiplayer compatible for up to 8 players.
 - **Minecraft version:** Java Edition 1.20.1
-- **Modloader:** Fabric (loader 0.15.11)
+- **Modloader:** Fabric (loader 0.16.14)
 - **Docker image:** `itzg/minecraft-server:java21`
 
 ---
@@ -147,18 +147,15 @@ The `mods/` directory contains the server-side subset of the [Drehmal 2.2 mod li
 
 | Mod | Version | Purpose |
 |---|---|---|
-| Fabric API | 0.92.2+1.20.1 | Required by all Fabric mods |
-| Lithium | 0.11.2 | General server-side game logic optimization |
-| C2ME | 0.2.0+alpha.11.5 | Concurrent chunk loading across multiple CPU cores |
+| Fabric API | 0.92.6+1.20.1 | Required by all Fabric mods |
+| Lithium | 0.11.4 | General server-side game logic optimization |
 | FerriteCore | 6.0.1 | Memory usage optimization |
-| ModernFix | 5.18.1 | Performance, memory, and bug fixes |
+| ModernFix | 5.24.3 | Performance, memory, and bug fixes |
 | Memory Leak Fix | 1.1.5 | Fixes various memory leaks |
 | Starlight | 1.1.2 | Rewrites lighting engine for better performance |
 | Lazy DFU | 0.1.3 | Delays DataFixerUpper initialization, reduces startup time |
 
 ### Notes on specific mods
-
-**C2ME** is particularly beneficial on multi-core SBCs because it parallelizes chunk loading across all available CPU cores. Drehmal's 12k x 12k world means chunk loading is a significant workload. C2ME is an alpha build for 1.20.1 — if the server fails to start, it is the first mod to try removing to isolate the issue.
 
 **Starlight** has been archived by its author (March 2024) as Mojang improved their own lighting engine in newer Minecraft versions. For 1.20.1 it remains the correct and stable choice. The recommended successor, **ScalableLux**, only supports 1.21+.
 
@@ -171,17 +168,14 @@ If you need to re-download the mods, use the following commands from the `mods/`
 ```bash
 cd /opt/minecraft-arm64-drehmal/mods
 
-# Fabric API 0.92.2
-wget "https://cdn.modrinth.com/data/P7dR8mSH/versions/P7uGFii0/fabric-api-0.92.2%2B1.20.1.jar"
+# Fabric API 0.92.6
+wget "https://cdn.modrinth.com/data/P7dR8mSH/versions/UapVHwiP/fabric-api-0.92.6%2B1.20.1.jar"
 
-# Lithium 0.11.2
-wget "https://cdn.modrinth.com/data/gvQqBUqZ/versions/ZSNsJrPI/lithium-fabric-mc1.20.1-0.11.2.jar"
+# Lithium 0.11.4
+wget "https://cdn.modrinth.com/data/gvQqBUqZ/versions/iEcXOkz4/lithium-fabric-mc1.20.1-0.11.4.jar"
 
-# C2ME alpha.11.5
-wget "https://cdn.modrinth.com/data/VSNURh3q/versions/QZ5cUNXs/c2me-fabric-mc1.20.1-0.2.0%2Balpha.11.5.jar"
-
-# ModernFix 5.18.1
-wget "https://cdn.modrinth.com/data/nmDcB62a/versions/CB2UOpt3/modernfix-fabric-5.18.1%2Bmc1.20.1.jar"
+# ModernFix 5.24.3
+wget "https://cdn.modrinth.com/data/nmDcB62a/versions/Qt5OXLYh/modernfix-fabric-5.24.3%2Bmc1.20.1.jar"
 
 # FerriteCore 6.0.1
 wget "https://cdn.modrinth.com/data/uXXizFIs/versions/unerR5MN/ferritecore-6.0.1-fabric.jar"
@@ -214,10 +208,9 @@ The `java21` tag is used explicitly rather than `latest` because:
 /opt/minecraft-arm64-drehmal/
 ├── docker-compose.yml
 ├── mods/
-│   ├── fabric-api-0.92.2+1.20.1.jar
-│   ├── lithium-fabric-mc1.20.1-0.11.2.jar
-│   ├── c2me-fabric-mc1.20.1-0.2.0+alpha.11.5.jar
-│   ├── modernfix-fabric-5.18.1+mc1.20.1.jar
+│   ├── fabric-api-0.92.6+1.20.1.jar
+│   ├── lithium-fabric-mc1.20.1-0.11.4.jar
+│   ├── modernfix-fabric-5.24.3+mc1.20.1.jar
 │   ├── ferritecore-6.0.1-fabric.jar
 │   ├── memoryleakfix-fabric-1.17+-1.1.5.jar
 │   ├── starlight-1.1.2+fabric.dbc156f.jar
@@ -233,6 +226,5 @@ The `java21` tag is used explicitly rather than `latest` because:
 ## Known Issues & Notes
 
 - The server produces a `Can't keep up!` warning during initial startup while loading the Drehmal world. This is expected due to the world's size and resolves once the spawn area is fully loaded.
-- C2ME is an alpha build — if the server fails to start, try removing it from `mods/` first to isolate the issue.
 - Starlight is archived and will not receive further updates for 1.20.1. It is stable and safe to use.
 - The Drehmal world file is hosted on Google Drive. If the SBC has no browser, download it on a PC and `scp` it to the SBC before extracting.
