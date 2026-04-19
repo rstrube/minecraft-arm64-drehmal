@@ -133,5 +133,5 @@ services:
       ONLINE_MODE: "TRUE"
 
     volumes:
-      - /opt/minecraft/drehmal/data:/data
-      - /opt/minecraft/drehmal/mods:/mods:ro
+      - /opt/minecraft-arm64-drehmal/data:/data
+      - /opt/minecraft-arm64-drehmal/mods:/mods:ro
