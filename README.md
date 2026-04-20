@@ -223,6 +223,18 @@ The `java21` tag is used explicitly rather than `latest` because:
 
 ---
 
+## Server Settings
+
+The `docker-compose.yml` includes several fixed server settings required by Drehmal:
+
+| Setting | Value | Reason |
+|---|---|---|
+| `ENABLE_COMMAND_BLOCK` | `true` | Required by Drehmal — the map uses command blocks extensively for its story and mechanics |
+| `SPAWN_PROTECTION` | `0` | Disabled so players can interact with the Drehmal spawn area |
+| `MAX_PLAYERS` | `8` | Drehmal's recommended maximum |
+
+---
+
 ## Known Issues & Notes
 
 - The server produces a `Can't keep up!` warning during initial startup while loading the Drehmal world. This is expected due to the world's size and resolves once the spawn area is fully loaded.

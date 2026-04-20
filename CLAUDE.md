@@ -175,6 +175,18 @@ The world file is excluded from the repository (too large for git) and must be d
 
 ---
 
+## Server Settings
+
+Fixed server settings in `docker-compose.yml` required by Drehmal:
+
+| Setting | Value | Reason |
+|---|---|---|
+| `ENABLE_COMMAND_BLOCK` | `true` | Required — Drehmal uses command blocks extensively for story and mechanics |
+| `SPAWN_PROTECTION` | `0` | Disabled so players can interact with the Drehmal spawn area |
+| `MAX_PLAYERS` | `8` | Drehmal's recommended maximum |
+
+---
+
 ## Known Issues & Notes
 
 - The server produces a `Can't keep up!` warning during initial startup while loading the Drehmal world. This is expected due to the world's size and resolves once the spawn area is fully loaded.

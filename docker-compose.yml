@@ -131,6 +131,7 @@ services:
       DIFFICULTY: normal
       SPAWN_PROTECTION: "0"
       ONLINE_MODE: "TRUE"
+      ENABLE_COMMAND_BLOCK: "true"
 
     volumes:
       - /opt/minecraft-arm64-drehmal/data:/data
