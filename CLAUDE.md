@@ -1,83 +1,80 @@
-# CLAUDE.md — minecraft-arm64-drehmal
+# CLAUDE.md
 
-This file provides context for Claude Code and any AI assistant working on this project. It summarizes the project's purpose, architecture decisions, hardware context, and rationale for key choices made during setup.
-
----
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-This project provides a Dockerized Minecraft Java Edition server running the **Drehmal: APOTHEOSIS** adventure map, designed to run on ARM64 single-board computers (SBCs). The server is built around the [`itzg/docker-minecraft-server`](https://github.com/itzg/docker-minecraft-server) image and uses Fabric modloader with a curated set of server-side performance mods.
-
-The project is hosted on GitHub so that configuration changes (primarily `docker-compose.yml`) can be version controlled and pulled directly to the server without manual file copying. The world data itself is not included in the repository due to its size — setup instructions for downloading and extracting it are in the README.
+Dockerized Minecraft Java Edition server running the **Drehmal: APOTHEOSIS** adventure map (v2.2.2f) on ARM64 SBCs. Built on [`itzg/docker-minecraft-server`](https://github.com/itzg/docker-minecraft-server) with Fabric modloader. The only file that changes in normal use is `docker-compose.yml`.
 
 ---
 
-## Hardware Context
+## Key Constraints
 
-The primary target hardware is the **Raspberry Pi** (Pi 4 and Pi 5 family), running a Debian-based Linux distro (Raspberry Pi OS or Ubuntu) with Docker installed. Any ARM64 SBC meeting those requirements should work.
-
-The `docker-compose.yml` includes four hardware tiers targeting common Raspberry Pi configurations. Only one tier should be active at a time.
-
-The project author runs an **Odroid N2+** (4GB RAM, 6-core Cortex-A73/A53), which fits at Tier 3 — the same RAM allocation and settings as the Raspberry Pi 5 (4GB).
-
----
-
-## Minecraft & Map Details
-
-- **Map:** Drehmal: APOTHEOSIS v2.2.2f
-- **Minecraft version:** Java Edition 1.20.1
-- **Modloader:** Fabric
-- **Fabric Loader version:** 0.16.14
-- **Map size:** 12,000 x 12,000 blocks
-- **Max recommended players:** 8
-- **Map download:** https://www.drehmal.net/downloads (World File — Google Drive)
-
-Drehmal is a massive open-world adventure map with heavy emphasis on exploration, survival, and narrative. It is 100% multiplayer compatible. All Drehmal mods are client-side except for the performance mods listed below.
+- **Mod versions are fixed** — they must match the [Drehmal 2.2 mod list](https://www.drehmal.net/2-2-mod-list) exactly. Do not upgrade mod versions without verifying Drehmal compatibility.
+- **Minecraft version is 1.20.1** — locked by Drehmal.
+- **Docker image tag is `java21`**, not `latest` — `latest` now tracks Java 25+, which breaks mod compatibility.
+- **Server settings that must not change:** `ENABLE_COMMAND_BLOCK: true` (Drehmal uses command blocks for story/mechanics), `SPAWN_PROTECTION: 0` (players must interact with the Drehmal spawn area), `MAX_PLAYERS: 8` (Drehmal's recommended maximum).
 
 ---
 
-## Docker Image
+## Hardware Tiers
 
-```
-itzg/minecraft-server:java21
-```
+`docker-compose.yml` has four commented hardware tiers — **only one should be active at a time**. When switching tiers, comment out the current tier's `MEMORY`, `JVM_OPTS`, `VIEW_DISTANCE`, and `SIMULATION_DISTANCE`, then uncomment the new tier's block. Tier 3 is the default (active/uncommented).
 
-The `java21` tag is used explicitly rather than `latest` because:
+| Tier | RAM | MEMORY | VIEW_DISTANCE | SIMULATION_DISTANCE | Example Hardware |
+|---|---|---|---|---|---|
+| 1 | 2GB | 1G | 6 | 4 | Raspberry Pi 4 (2GB) |
+| 2 | 4GB | 2G | 7 | 5 | Raspberry Pi 4 (4GB) |
+| 3 | 4GB | 3G | 8 | 6 | Raspberry Pi 5 (4GB) ← default |
+| 4 | 8GB | 6G | 10 | 8 | Raspberry Pi 5 (8GB) |
 
-- Minecraft 1.20.1 officially targets Java 21
-- The `latest` tag tracks the newest Java version (currently Java 25) which breaks mod compatibility
-- Using a specific tag prevents unexpected breakage on image updates
+`MEMORY` is kept below total RAM to leave ~1GB headroom for the OS. `SIMULATION_DISTANCE` must always be ≤ `VIEW_DISTANCE`.
+
+The project author runs an **Odroid N2+** (4GB, 6-core Cortex-A73/A53), which fits Tier 3.
 
 ---
 
 ## Directory Structure
 
-The repo is cloned into `/opt` on the SBC, giving a root directory of `/opt/minecraft-arm64-drehmal`:
-
 ```
-/opt/minecraft-arm64-drehmal/
-├── docker-compose.yml
-├── mods/
-│   ├── fabric-api-0.92.6+1.20.1.jar
-│   ├── lithium-fabric-mc1.20.1-0.11.4.jar
-│   ├── modernfix-fabric-5.24.3+mc1.20.1.jar
-│   ├── ferritecore-6.0.1-fabric.jar
-│   ├── memoryleakfix-fabric-1.17+-1.1.5.jar
-│   ├── starlight-1.1.2+fabric.dbc156f.jar
-│   └── lazydfu-0.1.3.jar
-├── data/               # World data, server configs, logs (not in git)
-│   └── world/          # Extracted Drehmal world folder
-├── CLAUDE.md
-└── README.md
+/opt/minecraft-arm64-drehmal/   ← deploy path on the SBC
+├── docker-compose.yml          ← only version-controlled config file
+├── mods/                       ← server-side mod JARs (version-controlled)
+├── data/                       ← world data, server configs, logs (gitignored)
+│   └── world/                  ← extracted Drehmal world folder
+└── original-world-zip/         ← original Drehmal zip kept for re-extraction (gitignored)
 ```
 
-The `data/` directory is created manually after cloning and is not committed to git. The world file is downloaded separately and extracted into `data/world/`.
+The `data/` and `original-world-zip/` directories are gitignored and must be created and populated manually on each new deployment.
+
+---
+
+## Docker Commands
+
+```bash
+# Start the server
+docker compose up -d
+
+# Stop the server
+docker compose down
+
+# Pull config updates and restart
+git pull && docker compose down && docker compose up -d
+
+# View live logs (Ctrl+C to stop — does NOT stop the server)
+docker logs -f minecraft-drehmal
+
+# Attach to server console (type Minecraft commands directly)
+docker attach minecraft-drehmal
+# Detach WITHOUT stopping: Ctrl+P then Ctrl+Q
+# WARNING: Ctrl+C while attached WILL stop the server
+```
 
 ---
 
 ## Server-Side Mods
 
-All mods are for **Minecraft 1.20.1 / Fabric** and are stored in the `mods/` directory of this repository. They are the server-side subset of the [Drehmal 2.2 mod list](https://www.drehmal.net/2-2-mod-list). All other mods on the Drehmal list are client-side rendering/visual mods that players install locally via the Drehmal installer.
+Mods are the server-side subset of the Drehmal 2.2 mod list. All other Drehmal mods are client-side and installed by players via the Drehmal installer.
 
 | Mod | Version | Purpose |
 |---|---|---|
@@ -89,106 +86,31 @@ All mods are for **Minecraft 1.20.1 / Fabric** and are stored in the `mods/` dir
 | Starlight | 1.1.2 | Rewrites lighting engine for better performance |
 | Lazy DFU | 0.1.3 | Delays DataFixerUpper initialization, reduces startup time |
 
-### Notes on specific mods
+**Starlight** is archived (March 2024) — it will never be updated for 1.20.1. It is stable and correct for this version. The successor, ScalableLux, only supports 1.21+.
 
-**Starlight** has been archived by its author (March 2024) as Mojang improved their own lighting engine in newer Minecraft versions. For 1.20.1 it remains the correct choice. The recommended successor, **ScalableLux**, only supports 1.21+.
+### Re-downloading mods
 
-**Lazy DFU** significantly reduces server startup time by deferring DataFixerUpper (DFU) initialization, which Minecraft uses for world data migration. On a large world like Drehmal this makes a noticeable difference.
+```bash
+cd /opt/minecraft-arm64-drehmal/mods
+
+wget "https://cdn.modrinth.com/data/P7dR8mSH/versions/UapVHwiP/fabric-api-0.92.6%2B1.20.1.jar"
+wget "https://cdn.modrinth.com/data/gvQqBUqZ/versions/iEcXOkz4/lithium-fabric-mc1.20.1-0.11.4.jar"
+wget "https://cdn.modrinth.com/data/nmDcB62a/versions/Qt5OXLYh/modernfix-fabric-5.24.3%2Bmc1.20.1.jar"
+wget "https://cdn.modrinth.com/data/uXXizFIs/versions/unerR5MN/ferritecore-6.0.1-fabric.jar"
+wget "https://cdn.modrinth.com/data/NRjRiSSD/versions/5xvCCRjJ/memoryleakfix-fabric-1.17%2B-1.1.5.jar"
+wget "https://cdn.modrinth.com/data/H8CaAYZC/versions/XGIsoVGT/starlight-1.1.2%2Bfabric.dbc156f.jar"
+wget "https://cdn.modrinth.com/data/hvFnDODi/versions/0.1.3/lazydfu-0.1.3.jar"
+```
 
 ---
 
 ## UID / GID
 
-The `docker-compose.yml` has UID/GID commented out by default for portability. If set, the container runs the Minecraft process as that user, meaning files written to `data/` will be owned by that user rather than root. To find your values:
-
-```bash
-id -u   # UID
-id -g   # GID
-```
-
-Without UID/GID set, files in the data directory will be owned by root and will require `sudo` to interact with directly. For a personal server this is a minor inconvenience rather than a real problem.
+`UID` and `GID` are commented out in `docker-compose.yml` by default. Without them, files written to `data/` are owned by root and require `sudo` to interact with. Set them to run the container as a specific user (`id -u` / `id -g`).
 
 ---
 
-## Key Docker Commands
+## Known Issues
 
-```bash
-# Start the server
-docker compose up -d
-
-# Stop the server
-docker compose down
-
-# View live logs
-docker logs -f minecraft-drehmal
-
-# Stop viewing logs (does NOT affect the server)
-# Press: Ctrl+C
-
-# Attach to server console (interact with Minecraft server directly)
-docker attach minecraft-drehmal
-
-# Detach from console WITHOUT stopping the server
-# Press: Ctrl+P then Ctrl+Q
-# WARNING: Do NOT press Ctrl+C while attached — this will stop the server
-```
-
----
-
-## Hardware Tier Reference
-
-The `docker-compose.yml` includes four hardware tiers. Only one should be active at a time. `MEMORY`, `JVM_OPTS`, `VIEW_DISTANCE`, and `SIMULATION_DISTANCE` are all grouped together per tier.
-
-| Tier | RAM | MEMORY | VIEW_DISTANCE | SIMULATION_DISTANCE | Example Hardware |
-|---|---|---|---|---|---|
-| 1 | 2GB | 1G | 6 | 4 | Raspberry Pi 4 (2GB) |
-| 2 | 4GB | 2G | 7 | 5 | Raspberry Pi 4 (4GB) |
-| 3 | 4GB | 3G | 8 | 6 | Raspberry Pi 5 (4GB) ← default |
-| 4 | 8GB | 6G | 10 | 8 | Raspberry Pi 5 (8GB) |
-
-The Odroid N2+ (4GB) fits Tier 3.
-
-`MEMORY` is set below total RAM to leave ~1GB headroom for the OS. `SIMULATION_DISTANCE` should always be ≤ `VIEW_DISTANCE`. For an adventure map like Drehmal, lower simulation distance has minimal gameplay impact since players are exploring rather than running farms.
-
----
-
-## Client Setup
-
-Players connecting to the server must have the Drehmal client installed locally. All visual/rendering mods are client-side and are not present on the server. Players should:
-
-1. Download and run the Drehmal installer from https://www.drehmal.net/downloads
-2. The installer sets up Fabric 1.20.1, all client mods, and the resource pack automatically
-3. Connect to the server IP on port 25565
-
----
-
-## Why GitHub
-
-The repository exists to:
-
-- Version control the `docker-compose.yml` so configuration changes are tracked
-- Allow updates to be pulled directly to the server with `git pull` rather than manual file copying
-- Provide a reference for setting up the server on other ARM64 SBCs
-- Document the rationale for mod and configuration choices for future reference
-
-The world file is excluded from the repository (too large for git) and must be downloaded separately from the Drehmal website.
-
----
-
-## Server Settings
-
-Fixed server settings in `docker-compose.yml` required by Drehmal:
-
-| Setting | Value | Reason |
-|---|---|---|
-| `ENABLE_COMMAND_BLOCK` | `true` | Required — Drehmal uses command blocks extensively for story and mechanics |
-| `SPAWN_PROTECTION` | `0` | Disabled so players can interact with the Drehmal spawn area |
-| `MAX_PLAYERS` | `8` | Drehmal's recommended maximum |
-
----
-
-## Known Issues & Notes
-
-- The server produces a `Can't keep up!` warning during initial startup while loading the Drehmal world. This is expected due to the world's size and resolves once the spawn area is fully loaded.
-- Starlight is archived and will not receive further updates for 1.20.1. It is stable and safe to use.
-- The Drehmal world file is downloaded via Google Drive. If the SBC has no browser, download it on a PC and `scp` it to the SBC before extracting.
+- `Can't keep up!` warnings appear during initial startup while the large Drehmal world loads — expected, resolves once the spawn area is fully prepared.
+- The Drehmal world download is a Google Drive link. On a headless SBC, download on a PC and `scp` to the SBC.
